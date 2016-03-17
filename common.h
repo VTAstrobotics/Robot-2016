@@ -11,7 +11,9 @@
 
 #include <time.h>
 
-// Motor and misc values
+// Pin configurations
+static const int LEFT_DRIVE_PIN  = 0;
+static const int RIGHT_DRIVE_PIN = 1;
 
 // Xbox controller IDs
 static const int LTHUMBX   = 0;

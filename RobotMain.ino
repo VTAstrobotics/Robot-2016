@@ -10,42 +10,46 @@ const int LOOP_DELAY = (int) (1000 / LOOP_HZ);
 const int READY_LED = 12;
 const int ACTIVE_LED = 11;
 
-// Motor controllers
-//const int LEFT_DRIVE_PIN  = 0;
+// FIXME Using 2016 Kent State pin configuration for driving
 
-//PWMTalon RIGHT_DRIVE_CONTROLLER;
+PWMTalon driveLeft;
+PWMTalon driveRight;
 NetComm comm;
 ControlData control;
 bool dead = true;
 
 void printData(ControlData& data) {
-    char out[64];
-/*    if(data.id == 17) {
-        sprintf(out, "DPAD, Y: %d, X: %d", data.dpadY, data.dpadX);
-    } else {
-        sprintf(out, "Data update, id: %d, value: %d", data.id, data.val);
-    }*/
-    Serial.println(out);
+//    char out[64];
+//    if(data.id == 17) {
+//        sprintf(out, "DPAD, Y: %d, X: %d", data.dpadY, data.dpadX);
+//    } else {
+//        sprintf(out, "Data update, id: %d, value: %d", data.id, data.val);
+//    }
+//    Serial.println(out);
 }
 
 void killMotors() {
-    // TODO tell all motors to reset to 0.0
+    driveLeft.set_speed(0.0f);
+    driveRight.set_speed(0.0f);
     dead = true;
 }
 
 void motorControl(ControlData& data) {
     // Update state
-/*    if(data.id == DEADMAN) {
-        // Pressed = active, released = dead
-        dead = !data.val;
-        digitalWrite(ACTIVE_LED, data.val);
-        if(dead) {
-            killMotors();
-        }
-    }*/
+    // TODO Some way of using constants to define controls
+
+    // Deadman is left bumper
+    // Pressed = alive, released = dead
+    dead = !data.bumper_l;
+    digitalWrite(ACTIVE_LED, !dead); // Turn on when alive
     if(dead) {
+        killMotors();
         return;
     }
+
+    // Drive control, left and right control sticks
+    driveLeft.set_speed(data.LY);
+    driveRight.set_speed(data.RY);
 }
 
 void check_connected() {
@@ -61,14 +65,14 @@ void check_connected() {
 void setup() {
     Serial.begin(9600);
     // Initialize default values for control
-    bzero(&control, sizeof(control));
+    memset(&control, 0, sizeof(control));
     // Activate LED to indicate readiness
     pinMode(READY_LED, OUTPUT);
     pinMode(ACTIVE_LED, OUTPUT);
     // Initialize motor controllers
     PWMTalon::talon_init();
-//    LEFT_DRIVE_CONTROLLER.attach(LEFT_DRIVE_PIN, true);
-//    RIGHT_DRIVE_CONTROLLER.attach(RIGHT_DRIVE_PIN);
+    driveLeft.attach(LEFT_DRIVE_PIN, true);
+    driveRight.attach(RIGHT_DRIVE_PIN);
     killMotors();
 }
 
