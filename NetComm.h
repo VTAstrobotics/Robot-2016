@@ -58,57 +58,57 @@ struct __attribute__((__packed__)) PingData {
 };
 
 struct __attribute__((__packed__)) ControlData {
-	float LX;
-	float LY;
-	float RX;
-	float RY;
-	float trigL;
-	float trigR;
+    float LX;
+    float LY;
+    float RX;
+    float RY;
+    float trigL;
+    float trigR;
 
-	bool button_a;
-	bool button_b;
-	bool button_x;
-	bool button_y;
-	bool bumper_l;
-	bool bumper_r;
-	bool back;
-	bool start;
-	bool thumb_l;
-	bool thumb_r;
+    bool button_a;
+    bool button_b;
+    bool button_x;
+    bool button_y;
+    bool bumper_l;
+    bool bumper_r;
+    bool back;
+    bool start;
+    bool thumb_l;
+    bool thumb_r;
 
-	int dpad_x;
-	int dpad_y;
+    int dpad_x;
+    int dpad_y;
 };
 
 struct __attribute__((__packed__)) CommData {
-	// axes, all signed
-	int8_t LX;
-	int8_t LY;
-	int8_t RX;
-	int8_t RY;
-	int8_t trigL;
-	int8_t trigR;
+    // axes, all signed
+    int8_t LX;
+    int8_t LY;
+    int8_t RX;
+    int8_t RY;
+    int8_t trigL;
+    int8_t trigR;
 
-	// buttons, unsigned (0 or 1)
-	uint8_t button_a :1;
-	uint8_t button_b :1;
-	uint8_t button_x :1;
-	uint8_t button_y :1;
-	uint8_t bumper_l :1;
-	uint8_t bumper_r :1;
-	uint8_t back     :1;
-	uint8_t start    :1;
-	uint8_t thumb_l  :1;
-	uint8_t thumb_r  :1;
-	uint8_t unused   :6;
+    // buttons, unsigned (0 or 1)
+    uint8_t button_a :1;
+    uint8_t button_b :1;
+    uint8_t button_x :1;
+    uint8_t button_y :1;
+    uint8_t bumper_l :1;
+    uint8_t bumper_r :1;
+    uint8_t back     :1;
+    uint8_t start    :1;
+    uint8_t thumb_l  :1;
+    uint8_t thumb_r  :1;
+    uint8_t unused   :6;
 
-	// DPad
-	uint8_t x_pos :2;
-	uint8_t x_neg :2;
-	uint8_t y_pos :2;
-	uint8_t y_neg :2;
+    // DPad
+    uint8_t x_pos :2;
+    uint8_t x_neg :2;
+    uint8_t y_pos :2;
+    uint8_t y_neg :2;
 
-	uint16_t crc16;
+    uint16_t crc16;
 };
 
 class NetComm {
