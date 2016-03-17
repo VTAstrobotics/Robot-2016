@@ -46,8 +46,8 @@ NetComm::~NetComm() {
 bool NetComm::getData(ControlData* data) {
 	CommData rawData;
     int size = sizeof(CommData);
-    bzero(data, sizeof(ControlData));
-    bzero(&rawData, size);
+    memset(data, 0, sizeof(ControlData));
+    memset(&rawData, 0, size);
     int len = recvfrom(recvSock, &rawData, size, 0, NULL, NULL);
     if (len < size) {
         return false;
