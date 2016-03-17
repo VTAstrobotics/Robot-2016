@@ -35,14 +35,14 @@ void killMotors() {
 
 void motorControl(ControlData& data) {
     // Update state
-    if(data.id == DEADMAN) {
+/*    if(data.id == DEADMAN) {
         // Pressed = active, released = dead
         dead = !data.val;
         digitalWrite(ACTIVE_LED, data.val);
         if(dead) {
             killMotors();
         }
-    }
+    }*/
     if(dead) {
         return;
     }

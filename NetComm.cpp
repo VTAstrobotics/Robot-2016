@@ -34,7 +34,7 @@ NetComm::NetComm() : pingReceived(true), lastPingTime(getCurrentSeconds()) {
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
 
-    // Initalize network interface structure
+    // Initialize network interface structure
     bzero(&ifr, sizeof(ifr));
     strcpy(ifr.ifr_name, "wlan0");
 }
@@ -44,8 +44,7 @@ NetComm::~NetComm() {
 }
 
 bool NetComm::getData(ControlData* data) {
-    // TODO implement
-/*    CommData rawData;
+	CommData rawData;
     int size = sizeof(CommData);
     bzero(data, sizeof(ControlData));
     bzero(&rawData, size);
@@ -58,19 +57,49 @@ bool NetComm::getData(ControlData* data) {
     if(crc16Check != rawData.crc16) {
         return false;
     }
-    data->id = rawData.id;
-    data->val = rawData.val;
-    unsigned int dpad = rawData.val;
-    if(dpad & (1<<6)) {
-        data->dpadY = 1;
-    } else if(dpad & (1<<4)) {
-        data->dpadY = -1;
-    } else if(dpad & (1<<2)) {
-        data->dpadX = 1;
-    } else if(dpad & 1) {
-        data->dpadX = -1;
-    }
-    return true;*/
+    //rawData represents CommData
+    //data represents ControlData
+    float conversion;
+
+    conversion =  ((float) rawData.LX)/100;
+    data->LX = conversion;
+    conversion = ((float) rawData.LY)/100;
+    data->LY = conversion;
+    conversion = ((float) rawData.RX)/100;
+    data->RX = conversion;
+    conversion = ((float) rawData.RY)/100;
+    data->RY = conversion;
+    conversion = ((float) rawData.trigL)/100;
+    data->trigL = conversion;
+    conversion = ((float) rawData.trigR)/100;
+    data->trigR = conversion;
+
+    data->button_a = rawData.button_a;
+    data->button_b = rawData.button_b;
+    data->button_x = rawData.button_x;
+    data->button_y = rawData.button_y;
+    data->bumper_l = rawData.bumper_l;
+    data->bumper_r = rawData.bumper_r;
+    data->back = rawData.back;
+    data->start = rawData.start;
+    data->thumb_l = rawData.thumb_l;
+    data->thumb_r = rawData.thumb_r;
+
+    int temp = 0;
+    if(rawData.x_pos == 1)
+    	temp = 1;
+    else if (rawData.x_neg == 1)
+    	temp = -1;
+    data->dpad_x = temp;
+    temp = 0;
+    if(rawData.x_pos == 1)
+    	temp = 1;
+    else if (rawData.x_neg == 1)
+      	temp = -1;
+    data->dpad_y = temp;
+
+
+    return true;
 }
 
 bool NetComm::isNetworkUp() {
