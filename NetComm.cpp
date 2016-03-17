@@ -44,36 +44,42 @@ NetComm::~NetComm() {
 }
 
 bool NetComm::getData(ControlData* data) {
-	CommData rawData;
+    // rawData represents CommData
+    // data represents ControlData
+    CommData rawData;
     int size = sizeof(CommData);
     memset(data, 0, sizeof(ControlData));
     memset(&rawData, 0, size);
+
+    // Receive from network
     int len = recvfrom(recvSock, &rawData, size, 0, NULL, NULL);
-    if (len < size) {
+    if(len < size) {
         return false;
     }
+
+    // Do CRC check
     unsigned short crc16Check = crc16((unsigned char*) &rawData,
             sizeof(CommData) - sizeof(unsigned short));
     if(crc16Check != rawData.crc16) {
         return false;
     }
-    //rawData represents CommData
-    //data represents ControlData
-    float conversion;
 
-    conversion =  ((float) rawData.LX)/100;
+    // Axes
+    float conversion;
+    conversion = ((float) rawData.LX) / 100;
     data->LX = conversion;
-    conversion = ((float) rawData.LY)/100;
+    conversion = ((float) rawData.LY) / 100;
     data->LY = conversion;
-    conversion = ((float) rawData.RX)/100;
+    conversion = ((float) rawData.RX) / 100;
     data->RX = conversion;
-    conversion = ((float) rawData.RY)/100;
+    conversion = ((float) rawData.RY) / 100;
     data->RY = conversion;
-    conversion = ((float) rawData.trigL)/100;
+    conversion = ((float) rawData.trigL) / 100;
     data->trigL = conversion;
-    conversion = ((float) rawData.trigR)/100;
+    conversion = ((float) rawData.trigR) / 100;
     data->trigR = conversion;
 
+    // Buttons
     data->button_a = rawData.button_a;
     data->button_b = rawData.button_b;
     data->button_x = rawData.button_x;
@@ -85,19 +91,21 @@ bool NetComm::getData(ControlData* data) {
     data->thumb_l = rawData.thumb_l;
     data->thumb_r = rawData.thumb_r;
 
+    // DPad
     int temp = 0;
-    if(rawData.x_pos == 1)
-    	temp = 1;
-    else if (rawData.x_neg == 1)
-    	temp = -1;
+    if(rawData.x_pos == 1) {
+        temp = 1;
+    } else if(rawData.x_neg == 1) {
+        temp = -1;
+    }
     data->dpad_x = temp;
     temp = 0;
-    if(rawData.x_pos == 1)
-    	temp = 1;
-    else if (rawData.x_neg == 1)
-      	temp = -1;
+    if(rawData.x_pos == 1) {
+        temp = 1;
+    } else if(rawData.x_neg == 1) {
+        temp = -1;
+    }
     data->dpad_y = temp;
-
 
     return true;
 }

@@ -57,7 +57,7 @@ struct __attribute__((__packed__)) PingData {
     uint8_t pingValue;
 };
 
-struct ControlData {
+struct __attribute__((__packed__)) ControlData {
 	float LX;
 	float LY;
 	float RX;
@@ -78,11 +78,10 @@ struct ControlData {
 
 	int dpad_x;
 	int dpad_y;
-
 };
 
-struct CommData {
-	//axes, all signed
+struct __attribute__((__packed__)) CommData {
+	// axes, all signed
 	int8_t LX;
 	int8_t LY;
 	int8_t RX;
@@ -90,20 +89,20 @@ struct CommData {
 	int8_t trigL;
 	int8_t trigR;
 
-	//buttons, unsigned (0 or 1)
+	// buttons, unsigned (0 or 1)
 	uint8_t button_a :1;
 	uint8_t button_b :1;
 	uint8_t button_x :1;
 	uint8_t button_y :1;
 	uint8_t bumper_l :1;
 	uint8_t bumper_r :1;
-	uint8_t back :1;
-	uint8_t start :1;
-	uint8_t thumb_l :1;
-	uint8_t thumb_r :1;
-	uint8_t unused :6;
+	uint8_t back     :1;
+	uint8_t start    :1;
+	uint8_t thumb_l  :1;
+	uint8_t thumb_r  :1;
+	uint8_t unused   :6;
 
-	//DPad
+	// DPad
 	uint8_t x_pos :2;
 	uint8_t x_neg :2;
 	uint8_t y_pos :2;
@@ -111,6 +110,7 @@ struct CommData {
 
 	uint16_t crc16;
 };
+
 class NetComm {
 public:
     NetComm();
@@ -131,4 +131,4 @@ private:
     void sendPing();
 };
 
-#endif ROBOT_2016_NETCOMM_H_
+#endif
