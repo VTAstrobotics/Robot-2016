@@ -19,13 +19,9 @@ ControlData control;
 bool dead = true;
 
 void printData(ControlData& data) {
-//    char out[64];
-//    if(data.id == 17) {
-//        sprintf(out, "DPAD, Y: %d, X: %d", data.dpadY, data.dpadX);
-//    } else {
-//        sprintf(out, "Data update, id: %d, value: %d", data.id, data.val);
-//    }
-//    Serial.println(out);
+    char out[512];
+    sprintf(out, "A: %d\nB: %d\nX: %d\nY: %d\n", data.button_a, data.button_b, data.button_x, data.button_y);
+    Serial.println(out);
 }
 
 void killMotors() {
@@ -50,6 +46,9 @@ void motorControl(ControlData& data) {
     // Drive control, left and right control sticks
     driveLeft.set_speed(data.LY);
     driveRight.set_speed(data.RY);
+    char out[64];
+    sprintf(out, "left drive: %f\n\rright drive: %f", data.LY, data.RY);
+    Serial.println(out);
 }
 
 void check_connected() {
