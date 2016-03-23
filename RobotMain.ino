@@ -17,6 +17,8 @@ PWMTalon driveRight;
 NetComm comm;
 ControlData control;
 bool dead = true;
+float leftRatio;
+float rightRatio;
 
 void printData(ControlData& data) {
     char out[512];
@@ -44,8 +46,18 @@ void motorControl(ControlData& data) {
     }
 
     // Drive control, left and right control sticks
-    driveLeft.set_speed(data.LY);
-    driveRight.set_speed(data.RY);
+    //implementing tank drive here
+    if data.LX < 0 { //determines ratio
+        leftRatio = (1 - abs(data.LX))/2;
+        rightRatio = 1 - leftRatio;
+    }
+    else {
+        rightRatio =  (1 + data.LX)/2;
+        leftRatio = 1 - rightRatio;
+    }
+        
+    driveLeft.set_speed(leftRatio*RY);
+    driveRight.set_speed(rightRatio*RY);
     char out[64];
     sprintf(out, "left drive: %f\n\rright drive: %f", data.LY, data.RY);
     Serial.println(out);
