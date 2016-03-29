@@ -47,17 +47,17 @@ void motorControl(ControlData& data) {
 
     // Drive control, left and right control sticks
     //implementing tank drive here
-    if data.LX < 0 { //determines ratio
-        leftRatio = (1 - abs(data.LX))/2;
+    if(data.LX < 0) { //determines ratio
+        leftRatio = (1 - abs(data.LX)) / 2;
         rightRatio = 1 - leftRatio;
     }
     else {
-        rightRatio =  (1 + data.LX)/2;
+        rightRatio =  (1 + data.LX) / 2;
         leftRatio = 1 - rightRatio;
     }
         
-    driveLeft.set_speed(leftRatio*RY);
-    driveRight.set_speed(rightRatio*RY);
+    driveLeft.set_speed(leftRatio * data.RY);
+    driveRight.set_speed(rightRatio * data.RY);
     char out[64];
     sprintf(out, "left drive: %f\n\rright drive: %f", data.LY, data.RY);
     Serial.println(out);
