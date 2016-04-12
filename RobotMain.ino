@@ -47,13 +47,13 @@ void motorControl(ControlData& data) {
 
     // Drive control, left and right control sticks
     //implementing tank drive here
-    if data.LX < 0 { //determines ratio
-        leftRatio = (1 - abs(data.LX))/2;
-        rightRatio = 1 - leftRatio;
+    if (data.LX < 0) { //determines ratio
+        leftRatio = 1  - abs(data.LX);
+        rightRatio = 1;
     }
     else {
-        rightRatio =  (1 + data.LX)/2;
-        leftRatio = 1 - rightRatio;
+        rightRatio = 1-data.LX;
+        leftRatio = 1;
     }
         
     driveLeft.set_speed(leftRatio*RY);

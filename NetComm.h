@@ -58,6 +58,7 @@ struct __attribute__((__packed__)) PingData {
 };
 
 struct __attribute__((__packed__)) ControlData {
+    //data used by robot
     float LX;
     float LY;
     float RX;
@@ -78,9 +79,12 @@ struct __attribute__((__packed__)) ControlData {
 
     int dpad_x;
     int dpad_y;
+
+
 };
 
 struct __attribute__((__packed__)) CommData {
+    //raw data from DS
     // axes, all signed
     int8_t LX;
     int8_t LY;
@@ -109,6 +113,12 @@ struct __attribute__((__packed__)) CommData {
     uint8_t y_neg :2;
 
     uint16_t crc16;
+
+    //robot to ds
+    uint8_t code :1;
+    uint8_t deadman :1;
+    uint8_t battery;
+    uint16_t crc16;
 };
 
 class NetComm {
@@ -118,6 +128,7 @@ public:
 
     bool getData(ControlData* data);
     bool isNetworkUp();
+    bool sendData();
 
 private:
     int recvSock;

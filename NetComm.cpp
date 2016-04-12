@@ -48,7 +48,7 @@ bool NetComm::getData(ControlData* data) {
     // data represents ControlData
     CommData rawData;
     int size = sizeof(CommData);
-    memset(data, 0, sizeof(ControlData));
+    //memset(data, 0, sizeof(ControlData));
     memset(&rawData, 0, size);
 
     // Receive from network
@@ -110,6 +110,13 @@ bool NetComm::getData(ControlData* data) {
     return true;
 }
 
+bool NetComm::sendData() {
+    code;
+    deadman;
+    battery;
+    crc16;
+
+}
 bool NetComm::isNetworkUp() {
     // Check interface status first
     if(ioctl(recvSock, SIOCGIFFLAGS, &ifr) != -1) {
