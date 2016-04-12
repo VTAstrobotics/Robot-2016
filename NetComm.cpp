@@ -111,10 +111,7 @@ bool NetComm::getData(ControlData* data) {
 }
 
 bool NetComm::sendData() {
-    code;
-    deadman;
-    battery;
-    crc16;
+
 
 }
 bool NetComm::isNetworkUp() {
