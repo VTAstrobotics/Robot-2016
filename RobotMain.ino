@@ -21,9 +21,9 @@ float leftRatio;
 float rightRatio;
 
 void printData(ControlData& data) {
-    char out[512];
-    sprintf(out, "A: %d\nB: %d\nX: %d\nY: %d\n", data.button_a, data.button_b, data.button_x, data.button_y);
-    Serial.println(out);
+//    char out[512];
+//    sprintf(out, "A: %d\nB: %d\nX: %d\nY: %d\n", data.button_a, data.button_b, data.button_x, data.button_y);
+//    Serial.println(out);
 }
 
 void killMotors() {
@@ -47,19 +47,42 @@ void motorControl(ControlData& data) {
 
     // Drive control, left and right control sticks
     //implementing tank drive here
-    if (data.LX < 0) { //determines ratio
-        leftRatio = 1  - abs(data.LX);
-        rightRatio = 1;
+//    if (data.LX < 0) { //determines ratio
+//        leftRatio = data.LX;
+//        rightRatio = -data.LX;
+//    }
+//    else {
+//        rightRatio = data.LX;
+//        leftRatio = -data.LX;
+//    }
+//    leftRatio += data.RY;
+//    rightRatio += data.RY;
+//    leftRatio = leftRatio / fmax(abs(leftRatio), abs(rightRatio));
+//    rightRatio = leftRatio / fmax(abs(leftRatio), abs(rightRatio));
+
+    // New tank drive
+    if(data.RY > 0) {
+        if(data.LX > 0) {
+            leftRatio = data.RY - data.LX;
+            rightRatio = fmax(data.RY, data.LX);
+        } else {
+            leftRatio = fmax(data.RY, -data.LX);
+            rightRatio = data.RY + data.LX;
+        }
+    } else {
+        if(data.LX > 0) {
+            leftRatio = -fmax(-data.RY, data.LX);
+            rightRatio = data.RY + data.LX;
+        } else {
+            leftRatio = data.RY - data.LX;
+            rightRatio = -fmax(-data.RY, -data.LX);
+        }
     }
-    else {
-        rightRatio = 1-data.LX;
-        leftRatio = 1;
-    }
-        
-    driveLeft.set_speed(leftRatio*RY);
-    driveRight.set_speed(rightRatio*RY);
+
+    driveLeft.set_speed(leftRatio);
+    driveRight.set_speed(rightRatio);
     char out[64];
-    sprintf(out, "left drive: %f\n\rright drive: %f", data.LY, data.RY);
+    sprintf(out, "left drive: %f\n\rright drive: %f", leftRatio, rightRatio);
     Serial.println(out);
 }
 
