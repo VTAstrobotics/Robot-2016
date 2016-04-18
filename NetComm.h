@@ -113,12 +113,6 @@ struct __attribute__((__packed__)) CommData {
     uint8_t y_neg :2;
 
     uint16_t crc16;
-
-    //robot to ds
-    uint8_t code :1;
-    uint8_t deadman :1;
-    uint8_t battery;
-    uint16_t crc16;
 };
 
 class NetComm {
