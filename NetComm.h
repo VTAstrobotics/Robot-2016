@@ -19,40 +19,7 @@ const int NETCOMM_PINGPORT = 6900;
 const int NETCOMM_PINGVALUE = 216;
 const double PING_TIMEOUT = 3;     // in seconds
 
-// Little-endian on Galileo (x86)
-/*struct __attribute__((__packed__)) Joystick {
-    float thumbLX;
-    float thumbLY;
-    float thumbRX;
-    float thumbRY;
-    float triggerL;
-    float triggerR;
-    unsigned int btnA :1;
-    unsigned int btnB :1;
-    unsigned int btnX :1;
-    unsigned int btnY :1;
-    unsigned int btnLB :1;
-    unsigned int btnRB :1;
-    unsigned int btnBack :1;
-    unsigned int btnStart :1;
-    unsigned int btnThumbL :1;
-    unsigned int btnThumbR :1;
-    unsigned int btnXbox :1;
-    signed int dpadX :2;
-    signed int dpadY :2;
-};
 
-struct __attribute__((__packed__)) ControlData {
-    Joystick joy1;
-    unsigned short crc16;
-};
-
-struct __attribute__((__packed__)) CommData {
-    uint8_t  id;
-    uint8_t  val;
-    uint16_t crc16;
-};
-*/
 struct __attribute__((__packed__)) PingData {
     uint8_t pingValue;
 };
@@ -79,7 +46,6 @@ struct __attribute__((__packed__)) ControlData {
 
     int dpad_x;
     int dpad_y;
-
 
 };
 
@@ -115,6 +81,14 @@ struct __attribute__((__packed__)) CommData {
     uint16_t crc16;
 };
 
+struct __attribute__((__packed__)) CommSend {
+
+    uint8_t deadman :1;
+    uint8_t battery;
+    uint16_t crc16;
+
+};
+
 class NetComm {
 public:
     NetComm();
@@ -122,7 +96,7 @@ public:
 
     bool getData(ControlData* data);
     bool isNetworkUp();
-    bool sendData();
+    bool sendData(bool dead, float battery);
 
 private:
     int recvSock;
@@ -132,6 +106,9 @@ private:
     double lastPingTime;
 
     ifreq ifr; // For detecting if network interface is up
+
+    bool currentDead;
+    float currentBatt;
 
     void sendPing();
 };
