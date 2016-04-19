@@ -45,37 +45,22 @@ void motorControl(ControlData& data) {
         return;
     }
 
-    // Drive control, left and right control sticks
-    //implementing tank drive here
-//    if (data.LX < 0) { //determines ratio
-//        leftRatio = data.LX;
-//        rightRatio = -data.LX;
-//    }
-//    else {
-//        rightRatio = data.LX;
-//        leftRatio = -data.LX;
-//    }
-//    leftRatio += data.RY;
-//    rightRatio += data.RY;
-//    leftRatio = leftRatio / fmax(abs(leftRatio), abs(rightRatio));
-//    rightRatio = leftRatio / fmax(abs(leftRatio), abs(rightRatio));
-
     // New tank drive
-    if(data.RY > 0) {
-        if(data.LX > 0) {
-            leftRatio = data.RY - data.LX;
-            rightRatio = fmax(data.RY, data.LX);
+    if(data.LY > 0) {
+        if(data.RX > 0) {
+            leftRatio = data.LY - data.RX;
+            rightRatio = fmax(data.LY, data.RX);
         } else {
-            leftRatio = fmax(data.RY, -data.LX);
-            rightRatio = data.RY + data.LX;
+            leftRatio = fmax(data.LY, -data.RX);
+            rightRatio = data.LY + data.RX;
         }
     } else {
-        if(data.LX > 0) {
-            leftRatio = -fmax(-data.RY, data.LX);
-            rightRatio = data.RY + data.LX;
+        if(data.RX > 0) {
+            leftRatio = -fmax(-data.LY, data.RX);
+            rightRatio = data.LY + data.RX;
         } else {
-            leftRatio = data.RY - data.LX;
-            rightRatio = -fmax(-data.RY, -data.LX);
+            leftRatio = data.LY - data.RX;
+            rightRatio = -fmax(-data.LY, -data.RX);
         }
     }
 
