@@ -110,10 +110,21 @@ bool NetComm::getData(ControlData* data) {
     return true;
 }
 
-bool NetComm::sendData() {
+bool NetComm::sendData(bool dead, float battery) {
 
+    CommSend data;
+    if (dead != currentDead){
+        int deadSend = (int) dead;
+        data.deadman = deadSend;
+        currentDead = dead; //update current value
+        }
+    if(battery != currentBatt){
+        int batterySend = 100 * battery;
+        data.battery = batterySend;
+        currentBatt = battery;
+    }
 
-}
+    }
 bool NetComm::isNetworkUp() {
     // Check interface status first
     if(ioctl(recvSock, SIOCGIFFLAGS, &ifr) != -1) {
