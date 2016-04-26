@@ -29,7 +29,8 @@ inline int bindSocket(int port) {
     return sock;
 }
 
-NetComm::NetComm() : pingReceived(true), lastPingTime(getCurrentSeconds()) {
+NetComm::NetComm() :
+        pingReceived(true), lastPingTime(getCurrentSeconds()) {
     // Initialize sockets
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
@@ -111,20 +112,23 @@ bool NetComm::getData(ControlData* data) {
 }
 
 bool NetComm::sendData(bool dead, float battery) {
-
     CommSend data;
-    if (dead != currentDead){
+
+    if(dead != currentDead) {
         int deadSend = (int) dead;
         data.deadman = deadSend;
         currentDead = dead; //update current value
-        }
-    if(battery != currentBatt){
+    }
+
+    if(battery != currentBatt) {
         int batterySend = 100 * battery;
         data.battery = batterySend;
         currentBatt = battery;
     }
 
-    }
+    return true;
+}
+
 bool NetComm::isNetworkUp() {
     // Check interface status first
     if(ioctl(recvSock, SIOCGIFFLAGS, &ifr) != -1) {
