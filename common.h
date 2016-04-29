@@ -16,6 +16,8 @@ static const int LEFT_DRIVE_PIN   = 1;
 static const int RIGHT_DRIVE_PIN  = 3;
 static const int BUCKET_ARM_PIN   = 5;
 static const int BUCKET_ANGLE_PIN = 7;
+static const int BED_ELEV_1_PIN   = 9;
+static const int BED_ELEV_2_PIN   = 11;
 
 // Xbox controller IDs
 static const int LTHUMBX   = 0;

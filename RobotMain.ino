@@ -16,6 +16,8 @@ PWMTalon driveLeft;
 PWMTalon driveRight;
 PWMTalon bucketAngle;
 PWMTalon bucketArm;
+PWMTalon bedElevator1;
+PWMTalon bedElevator2;
 
 NetComm comm;
 ControlData control;
@@ -34,6 +36,8 @@ void killMotors() {
     driveRight.set_speed(0.0f);
     bucketAngle.set_speed(0.0f);
     bucketArm.set_speed(0.0f);
+    bedElevator1.set_speed(0.0f);
+    bedElevator2.set_speed(0.0f);
     dead = true;
 }
 
@@ -68,12 +72,14 @@ void motorControl(ControlData& data) {
             rightRatio = -fmax(-data.LY, -data.RX);
         }
     }
+    driveLeft.set_speed(leftRatio);
+    driveRight.set_speed(rightRatio);
 
     // Bucket angle
     if(data.trigL > 0.01f) {
-        bucketArm.set_speed(-data.trigL * 0.5f);
+        bucketArm.set_speed(-data.trigL);
     } else if(data.trigR > 0.01f) {
-        bucketArm.set_speed(data.trigR * 0.5f);
+        bucketArm.set_speed(data.trigR);
     } else {
         bucketArm.set_speed(0.0f);
     }
@@ -87,8 +93,16 @@ void motorControl(ControlData& data) {
         bucketAngle.set_speed(0.0f);
     }
 
-    driveLeft.set_speed(leftRatio);
-    driveRight.set_speed(rightRatio);
+    // Bed elevator
+    float bedRatio = 0.0f;
+    if(data.button_b) {
+        bedRatio = 1.0f;
+    } else if(data.button_x) {
+        bedRatio = -1.0f;
+    }
+    bedElevator1.set_speed(bedRatio);
+    bedElevator2.set_speed(bedRatio);
+
     char out[128];
     sprintf(out, "left drive: %f\n\rright drive: %f\nleft trig: %f\nright trig: %f", leftRatio, rightRatio, data.trigL, data.trigR);
     Serial.println(out);
@@ -120,6 +134,8 @@ void setup() {
     driveRight.attach(RIGHT_DRIVE_PIN);
     bucketAngle.attach(BUCKET_ANGLE_PIN);
     bucketArm.attach(BUCKET_ARM_PIN);
+    bedElevator1.attach(BED_ELEV_1_PIN);
+    bedElevator2.attach(BED_ELEV_2_PIN);
 
     killMotors();
 }
