@@ -9,9 +9,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
 #include "crc-16.h"
 #include "common.h"
 
@@ -35,7 +32,7 @@ inline int NetComm::sendSocket(int port) {
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     bzero(&dest, sizeof(dest));
     dest.sin_family = AF_INET;
-    dest.sin_addr.s_addr = htonl(IP_send); //IP Address of driverstation
+    inet_pton(AF_INET, IP_send, &dest.sin_addr); // IP Address of driverstation
     dest.sin_port = htons(port);
     fcntl(sock, F_SETFL, O_NONBLOCK);
     return sock;
@@ -138,7 +135,7 @@ bool NetComm::sendData(bool dead, float battery) {
         currentBatt = battery;
     }
 
-    sendto(sendSock, &data, sizeof(data), 0, &dest, sizeof(dest)); //update with correct destination addresses (currently NULL)
+    sendto(sendSock, &data, sizeof(data), 0, (sockaddr*)&dest, sizeof(dest)); //update with correct destination addresses (currently NULL)
     return true;
 }
 

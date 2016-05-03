@@ -10,9 +10,10 @@
 #define ROBOT_2016_NETCOMM_H_
 
 #include <stdint.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <net/if.h>
-#include <string>
-using std::string;
 
 #define PING_ENABLED 0
 
@@ -21,7 +22,7 @@ const int NETCOMM_PINGPORT = 6900;
 const int NETCOMM_PINGVALUE = 216;
 const int NETCOMM_SENDPORT = 6850;
 
-string IP_send = "10.0.0.25";
+static const char* IP_send = "10.0.0.25";
 
 const double PING_TIMEOUT = 3;     // in seconds
 
@@ -104,7 +105,6 @@ public:
     bool getData(ControlData* data);
     bool isNetworkUp();
     bool sendData(bool dead, float battery);
-    inline int sendSocket(int port);
 
 private:
     int recvSock;
@@ -123,6 +123,7 @@ private:
 
     sockaddr_in dest; //destination socket for output
     void sendPing();
+    inline int sendSocket(int port);
 };
 
 #endif
