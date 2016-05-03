@@ -11,12 +11,18 @@
 
 #include <stdint.h>
 #include <net/if.h>
+#include <string>
+using std::string;
 
 #define PING_ENABLED 0
 
 const int NETCOMM_RECVPORT = 6800;
 const int NETCOMM_PINGPORT = 6900;
 const int NETCOMM_PINGVALUE = 216;
+const int NETCOMM_SENDPORT = 6850;
+
+string IP_send = "10.0.0.25";
+
 const double PING_TIMEOUT = 3;     // in seconds
 
 
@@ -83,6 +89,7 @@ struct __attribute__((__packed__)) CommData {
 
 struct __attribute__((__packed__)) CommSend {
 
+    uint8_t padding :7;
     uint8_t deadman :1;
     uint8_t battery;
     uint16_t crc16;
@@ -102,6 +109,9 @@ private:
     int recvSock;
 
     int pingSock;
+
+    int sendSock;
+
     bool pingReceived;
     double lastPingTime;
 
@@ -109,6 +119,8 @@ private:
 
     bool currentDead;
     float currentBatt;
+
+    sockaddr_in dest; //destination socket for output
 
     void sendPing();
 };

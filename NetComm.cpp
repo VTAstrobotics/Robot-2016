@@ -29,12 +29,27 @@ inline int bindSocket(int port) {
     return sock;
 }
 
+inline int sendSocket(int port) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    int reuse = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+    sockaddr_in addr;
+    bzero(&addr, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(IP_send); //IP Address of driverstation
+    addr.sin_port = htons(port);
+    bind(sock, (sockaddr*) &addr, sizeof(addr));
+    fcntl(sock, F_SETFL, O_NONBLOCK);
+    return sock;
+
+}
 NetComm::NetComm() :
         pingReceived(true), lastPingTime(getCurrentSeconds()) {
     // Initialize sockets
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
-
+    sendSock = sendSocket(NETCOMM_SENDPORT);
+    //IP
     // Initialize network interface structure
     bzero(&ifr, sizeof(ifr));
     strcpy(ifr.ifr_name, "wlan0");
@@ -125,7 +140,8 @@ bool NetComm::sendData(bool dead, float battery) {
         data.battery = batterySend;
         currentBatt = battery;
     }
-
+    //
+    sendto(sendSock, &data, 4, 0, NULL, NULL); //not sure about this
     return true;
 }
 
