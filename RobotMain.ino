@@ -14,8 +14,8 @@ const int ACTIVE_LED = 13;
 
 PWMTalon driveLeft;
 PWMTalon driveRight;
-PWMTalon bucketAngle;
 PWMTalon bucketArm;
+PWMTalon bucketAngle;
 PWMTalon bedElevator1;
 PWMTalon bedElevator2;
 
@@ -75,20 +75,20 @@ void motorControl(ControlData& data) {
     driveLeft.set_speed(leftRatio);
     driveRight.set_speed(rightRatio);
 
-    // Bucket angle
+    // Bucket arm
     if(data.trigL > 0.01f) {
-        bucketArm.set_speed(-data.trigL);
+        bucketArm.set_speed(-data.trigL * 0.5f);
     } else if(data.trigR > 0.01f) {
-        bucketArm.set_speed(data.trigR);
+        bucketArm.set_speed(data.trigR * 0.5f);
     } else {
         bucketArm.set_speed(0.0f);
     }
 
-    // Bucket arm
+    // Bucket angle
     if(data.button_y) {
-        bucketAngle.set_speed(-0.5f);
+        bucketAngle.set_speed(-1.0f);
     } else if(data.button_a) {
-        bucketAngle.set_speed(0.5f);
+        bucketAngle.set_speed(1.0f);
     } else {
         bucketAngle.set_speed(0.0f);
     }
@@ -132,8 +132,8 @@ void setup() {
     PWMTalon::talon_init();
     driveLeft.attach(LEFT_DRIVE_PIN, true);
     driveRight.attach(RIGHT_DRIVE_PIN);
-    bucketAngle.attach(BUCKET_ANGLE_PIN);
     bucketArm.attach(BUCKET_ARM_PIN);
+    bucketAngle.attach(BUCKET_ANGLE_PIN);
     bedElevator1.attach(BED_ELEV_1_PIN);
     bedElevator2.attach(BED_ELEV_2_PIN);
 
