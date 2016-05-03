@@ -2,7 +2,7 @@
  * NetComm.cpp
  *
  *  Created on: Mar 6, 2015
- *      Author: Anirudh Bagde
+ *      Authors: Anirudh Bagde and Matthew Conner
  */
 
 #include "NetComm.h"
@@ -29,12 +29,24 @@ inline int bindSocket(int port) {
     return sock;
 }
 
+inline int NetComm::sendSocket(int port) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    int reuse = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+    bzero(&dest, sizeof(dest));
+    dest.sin_family = AF_INET;
+    dest.sin_addr.s_addr = htonl(IP_send); //IP Address of driverstation
+    dest.sin_port = htons(port);
+    fcntl(sock, F_SETFL, O_NONBLOCK);
+    return sock;
+}
 NetComm::NetComm() :
         pingReceived(true), lastPingTime(getCurrentSeconds()) {
     // Initialize sockets
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
-
+    sendSock = sendSocket(NETCOMM_SENDPORT);
+    //IP
     // Initialize network interface structure
     bzero(&ifr, sizeof(ifr));
     strcpy(ifr.ifr_name, "wlan0");
@@ -126,6 +138,7 @@ bool NetComm::sendData(bool dead, float battery) {
         currentBatt = battery;
     }
 
+    sendto(sendSock, &data, sizeof(data), 0, &dest, sizeof(dest)); //update with correct destination addresses (currently NULL)
     return true;
 }
 
