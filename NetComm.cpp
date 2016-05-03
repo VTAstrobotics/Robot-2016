@@ -2,7 +2,7 @@
  * NetComm.cpp
  *
  *  Created on: Mar 6, 2015
- *      Author: Anirudh Bagde
+ *      Authors: Anirudh Bagde and Matthew Conner
  */
 
 #include "NetComm.h"
@@ -29,19 +29,16 @@ inline int bindSocket(int port) {
     return sock;
 }
 
-inline int sendSocket(int port) {
+inline int NetComm::sendSocket(int port) {
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     int reuse = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-    sockaddr_in addr;
-    bzero(&addr, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(IP_send); //IP Address of driverstation
-    addr.sin_port = htons(port);
-    bind(sock, (sockaddr*) &addr, sizeof(addr));
+    bzero(&dest, sizeof(dest));
+    dest.sin_family = AF_INET;
+    dest.sin_addr.s_addr = htonl(IP_send); //IP Address of driverstation
+    dest.sin_port = htons(port);
     fcntl(sock, F_SETFL, O_NONBLOCK);
     return sock;
-
 }
 NetComm::NetComm() :
         pingReceived(true), lastPingTime(getCurrentSeconds()) {
@@ -140,8 +137,8 @@ bool NetComm::sendData(bool dead, float battery) {
         data.battery = batterySend;
         currentBatt = battery;
     }
-    //
-    sendto(sendSock, &data, 4, 0, NULL, NULL); //not sure about this
+
+    sendto(sendSock, &data, sizeof(data), 0, &dest, sizeof(dest)); //update with correct destination addresses (currently NULL)
     return true;
 }
 

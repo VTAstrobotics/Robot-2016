@@ -3,7 +3,7 @@
  * Network communication library
  *
  *  Created on: Mar 6, 2015
- *      Author: Anirudh Bagde
+ *      Authors: Anirudh Bagde and Matthew Conner
  */
 
 #ifndef ROBOT_2016_NETCOMM_H_
@@ -104,6 +104,7 @@ public:
     bool getData(ControlData* data);
     bool isNetworkUp();
     bool sendData(bool dead, float battery);
+    inline int sendSocket(int port);
 
 private:
     int recvSock;
@@ -121,7 +122,6 @@ private:
     float currentBatt;
 
     sockaddr_in dest; //destination socket for output
-
     void sendPing();
 };
 
