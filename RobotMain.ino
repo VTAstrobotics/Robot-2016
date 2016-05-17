@@ -77,17 +77,17 @@ void motorControl(ControlData& data) {
 
     // Bucket arm
     if(data.trigL > 0.01f) {
-        bucketArm.set_speed(-data.trigL * 0.5f);
+        bucketArm.set_speed(-data.trigL) * 0.75f;
     } else if(data.trigR > 0.01f) {
-        bucketArm.set_speed(data.trigR * 0.5f);
+        bucketArm.set_speed(data.trigR * 0.75f);
     } else {
         bucketArm.set_speed(0.0f);
     }
 
     // Bucket angle
-    if(data.button_y) {
+    if(data.button_a) {
         bucketAngle.set_speed(-1.0f);
-    } else if(data.button_a) {
+    } else if(data.button_y) {
         bucketAngle.set_speed(1.0f);
     } else {
         bucketAngle.set_speed(0.0f);
