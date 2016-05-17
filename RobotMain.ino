@@ -77,9 +77,9 @@ void motorControl(ControlData& data) {
 
     // Bucket arm
     if(data.trigL > 0.01f) {
-        bucketArm.set_speed(-data.trigL) * 0.75f;
+        bucketArm.set_speed(-data.trigL);
     } else if(data.trigR > 0.01f) {
-        bucketArm.set_speed(data.trigR * 0.75f);
+        bucketArm.set_speed(data.trigR);
     } else {
         bucketArm.set_speed(0.0f);
     }
@@ -136,6 +136,9 @@ void setup() {
     bucketAngle.attach(BUCKET_ANGLE_PIN);
     bedElevator1.attach(BED_ELEV_1_PIN);
     bedElevator2.attach(BED_ELEV_2_PIN);
+
+    // Initialize control box LCD
+    setupControlBoxMenu();
 
     killMotors();
 }
