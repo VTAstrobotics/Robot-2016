@@ -15,16 +15,16 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 
-#define PING_ENABLED 0
+#define PING_ENABLED 1
 
 const int NETCOMM_RECVPORT = 6800;
 const int NETCOMM_PINGPORT = 6900;
 const int NETCOMM_PINGVALUE = 216;
 const int NETCOMM_SENDPORT = 6850;
 
-static const char* IP_send = "10.0.0.25";
+const char* const IP_send = "10.0.0.25";
 
-const double PING_TIMEOUT = 3;     // in seconds
+const double PING_TIMEOUT = 0.6;     // in seconds
 
 
 struct __attribute__((__packed__)) PingData {
