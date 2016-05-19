@@ -38,7 +38,7 @@ inline int NetComm::sendSocket(int port) {
     return sock;
 }
 NetComm::NetComm() :
-        pingReceived(true), lastPingTime(getCurrentSeconds()) {
+        pingReceived(true), lastPingTime(getCurrentSeconds()), currentDead(true), currentBatt(-1) {
     // Initialize sockets
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
@@ -120,22 +120,35 @@ bool NetComm::getData(ControlData* data) {
     return true;
 }
 
-bool NetComm::sendData(bool dead, float battery) {
-    CommSend data;
+bool NetComm::sendData(bool dead, float battery, float anglePercent) {
+    static CommSend data;
+    bool shouldSend = false;
 
     if(dead != currentDead) {
         int deadSend = (int) dead;
         data.deadman = deadSend;
-        currentDead = dead; //update current value
+        currentDead = deadSend; // update current value
+        shouldSend = true;
     }
 
-    if(battery != currentBatt) {
-        int batterySend = 100 * battery;
+    int batterySend = 100 * battery;
+    if(batterySend != currentBatt) {
         data.battery = batterySend;
-        currentBatt = battery;
+        currentBatt = batterySend;
+        shouldSend = true;
     }
 
-    sendto(sendSock, &data, sizeof(data), 0, (sockaddr*)&dest, sizeof(dest)); //update with correct destination addresses (currently NULL)
+    int angleSend = 100 * anglePercent;
+    if(angleSend != anglePercent) {
+        data.angle = angleSend;
+        currentAngle = angleSend;
+        shouldSend = true;
+    }
+
+    if(shouldSend) {
+        sendto(sendSock, &data, sizeof(data), 0, (sockaddr*)&dest, sizeof(dest));
+    }
+
     return true;
 }
 

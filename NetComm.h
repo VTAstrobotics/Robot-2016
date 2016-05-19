@@ -93,6 +93,7 @@ struct __attribute__((__packed__)) CommSend {
     uint8_t padding :7;
     uint8_t deadman :1;
     uint8_t battery;
+    uint8_t angle;
     uint16_t crc16;
 
 };
@@ -104,7 +105,7 @@ public:
 
     bool getData(ControlData* data);
     bool isNetworkUp();
-    bool sendData(bool dead, float battery);
+    bool sendData(bool dead, float battery, float anglePercent);
 
 private:
     int recvSock;
@@ -119,7 +120,8 @@ private:
     ifreq ifr; // For detecting if network interface is up
 
     bool currentDead;
-    float currentBatt;
+    int currentBatt;
+    int currentAngle;
 
     sockaddr_in dest; //destination socket for output
     void sendPing();
