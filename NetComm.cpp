@@ -2,16 +2,13 @@
  * NetComm.cpp
  *
  *  Created on: Mar 6, 2015
- *      Author: Anirudh Bagde
+ *      Authors: Anirudh Bagde and Matthew Conner
  */
 
 #include "NetComm.h"
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
 #include "crc-16.h"
 #include "common.h"
 
@@ -29,11 +26,24 @@ inline int bindSocket(int port) {
     return sock;
 }
 
-NetComm::NetComm() : pingReceived(true), lastPingTime(getCurrentSeconds()) {
+inline int NetComm::sendSocket(int port) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    int reuse = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+    bzero(&dest, sizeof(dest));
+    dest.sin_family = AF_INET;
+    inet_pton(AF_INET, IP_send, &dest.sin_addr); // IP Address of driverstation
+    dest.sin_port = htons(port);
+    fcntl(sock, F_SETFL, O_NONBLOCK);
+    return sock;
+}
+NetComm::NetComm() :
+        pingReceived(true), lastPingTime(getCurrentSeconds()), currentDead(true), currentBatt(-1) {
     // Initialize sockets
     recvSock = bindSocket(NETCOMM_RECVPORT);
     pingSock = bindSocket(NETCOMM_PINGPORT);
-
+    sendSock = sendSocket(NETCOMM_SENDPORT);
+    //IP
     // Initialize network interface structure
     bzero(&ifr, sizeof(ifr));
     strcpy(ifr.ifr_name, "wlan0");
@@ -48,7 +58,7 @@ bool NetComm::getData(ControlData* data) {
     // data represents ControlData
     CommData rawData;
     int size = sizeof(CommData);
-    memset(data, 0, sizeof(ControlData));
+    //memset(data, 0, sizeof(ControlData));
     memset(&rawData, 0, size);
 
     // Receive from network
@@ -106,6 +116,38 @@ bool NetComm::getData(ControlData* data) {
         temp = -1;
     }
     data->dpad_y = temp;
+
+    return true;
+}
+
+bool NetComm::sendData(bool dead, float battery, float anglePercent) {
+    static CommSend data;
+    bool shouldSend = false;
+
+    if(dead != currentDead) {
+        int deadSend = (int) dead;
+        data.deadman = deadSend;
+        currentDead = deadSend; // update current value
+        shouldSend = true;
+    }
+
+    int batterySend = 100 * battery;
+    if(batterySend != currentBatt) {
+        data.battery = batterySend;
+        currentBatt = batterySend;
+        shouldSend = true;
+    }
+
+    int angleSend = 100 * anglePercent;
+    if(angleSend != anglePercent) {
+        data.angle = angleSend;
+        currentAngle = angleSend;
+        shouldSend = true;
+    }
+
+    if(shouldSend) {
+        sendto(sendSock, &data, sizeof(data), 0, (sockaddr*)&dest, sizeof(dest));
+    }
 
     return true;
 }
